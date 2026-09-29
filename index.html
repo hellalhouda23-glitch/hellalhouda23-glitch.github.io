@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0E7C66">
+  <title>زكاتي - حاسبة الزكاة الذكية</title>
+  <meta name="description" content="حاسبة زكاة مجانية وسهلة. احسب زكاة المال والذهب والفضة والأسهم في ثوانٍ.">
+  <meta name="keywords" content="زكاة, حاسبة زكاة, zakat calculator, زكاة المال, نصاب الزكاة">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230E7C66'/><text x='50' y='72' text-anchor='middle' font-size='70' fill='%23D4A574' font-family='Arial' font-weight='bold'>ز</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230E7C66'/><text x='50' y='72' text-anchor='middle' font-size='70' fill='%23D4A574' font-family='Arial' font-weight='bold'>ز</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- 🔔 Monetag Push Notifications (أعلى دخل - يظهر للزائر مرة واحدة) -->
+  <!-- استبدلي ZONE_ID_PUSH بالرقم اللي يعطيك إياه Monetag من Dashboard -->
+  <script src="https://cdn.monetag.com/scripts/v1/push-sdk.js"
+          data-zone-id="ZONE_ID_PUSH"
+          data-sdk-type="web"
+          async></script>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="logo-wrap">
+          <div class="logo-icon">🕌</div>
+          <div>
+            <h1 class="app-title" data-i18n="appTitle">زكاتي</h1>
+            <p class="app-tagline" data-i18n="appTagline">حاسبة الزكاة الذكية</p>
+          </div>
+        </div>
+        <button class="lang-toggle" id="lang-toggle" aria-label="Language">
+          <span id="lang-flag">EN</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- ============ Calculator Screen ============ -->
+      <section class="screen active" id="screen-calculator">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">⚙️</span>
+            <h2 class="card-title" data-i18n="settingsTitle">الإعدادات الأساسية</h2>
+          </div>
+          <div class="form-group">
+            <label for="currency" data-i18n="currencyLabel">العملة</label>
+            <select id="currency" class="select">
+              <option value="DZD">🇩🇿 دينار جزائري (دج)</option>
+              <option value="SAR">🇸🇦 ريال سعودي (ر.س)</option>
+              <option value="AED">🇦🇪 درهم إماراتي (د.إ)</option>
+              <option value="EGP">🇪🇬 جنيه مصري (ج.م)</option>
+              <option value="MAD">🇲🇦 درهم مغربي (د.م)</option>
+              <option value="TND">🇹🇳 دينار تونسي (د.ت)</option>
+              <option value="USD">🇺🇸 دولار أمريكي ($)</option>
+              <option value="EUR">🇪🇺 يورو (€)</option>
+              <option value="GBP">🇬🇧 جنيه إسترليني (£)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">💰</span>
+            <h2 class="card-title" data-i18n="metalsTitle">أسعار المعادن اليوم</h2>
+          </div>
+          <div class="form-group">
+            <label for="gold-price" data-i18n="goldPriceLabel">سعر جرام الذهب</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="gold-price" class="input" placeholder="مثال: 8500" data-i18n-placeholder="goldPricePlaceholder">
+              <span class="input-suffix" id="currency-suffix-gold">دج</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="silver-price" data-i18n="silverPriceLabel">سعر جرام الفضة (اختياري)</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="silver-price" class="input" placeholder="مثال: 95" data-i18n-placeholder="silverPricePlaceholder">
+              <span class="input-suffix" id="currency-suffix-silver">دج</span>
+            </div>
+          </div>
+          <button class="link-btn" id="use-default-prices" data-i18n="useDefaultPrices">استخدام أسعار تقريبية</button>
+          <p class="hint-text" data-i18n="metalsHint">💡 يمكنك تعديل الأسعار حسب السوق المحلي. النصاب يحسب بأقل قيمة بين الذهب والفضة.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📊</span>
+            <h2 class="card-title" data-i18n="wealthTitle">الثروة التي تملكها لمدة حول</h2>
+          </div>
+          <div class="form-group">
+            <label for="cash" data-i18n="cashLabel">النقود (في البنك، في البيت)</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="cash" class="input" placeholder="0" data-i18n-placeholder="zero">
+              <span class="input-suffix" id="currency-suffix-cash">دج</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gold-grams" data-i18n="goldGramsLabel">الذهب (بالجرامات)</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="gold-grams" class="input" placeholder="0" data-i18n-placeholder="zero">
+              <span class="input-suffix" data-i18n="gram">جرام</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="silver-grams" data-i18n="silverGramsLabel">الفضة (بالجرامات)</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="silver-grams" class="input" placeholder="0" data-i18n-placeholder="zero">
+              <span class="input-suffix" data-i18n="gram">جرام</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="investments" data-i18n="investmentsLabel">الاستثمارات / الأسهم</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="investments" class="input" placeholder="0" data-i18n-placeholder="zero">
+              <span class="input-suffix" id="currency-suffix-invest">دج</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="debts" data-i18n="debtsLabel">الديون المستحقة عليك (اختياري)</label>
+            <div class="input-wrap">
+              <input type="number" inputmode="decimal" id="debts" class="input" placeholder="0" data-i18n-placeholder="zero">
+              <span class="input-suffix" id="currency-suffix-debts">دج</span>
+            </div>
+          </div>
+          <p class="hint-text" data-i18n="debtsHint">💡 الديون المؤجلة (قروض، فواتير) تُخصم من الثروة قبل حساب الزكاة.</p>
+        </div>
+
+        <button class="primary-btn" id="calculate-btn">
+          <span data-i18n="calculateBtn">احسب الزكاة</span>
+          <span class="btn-arrow">←</span>
+        </button>
+
+        <div class="result-card hidden" id="result-card">
+          <div class="result-header">
+            <span class="result-icon" id="result-icon">✅</span>
+            <h3 class="result-title" id="result-title" data-i18n="resultTitle">نتيجة الحساب</h3>
+          </div>
+
+          <div class="result-row">
+            <span class="result-label" data-i18n="totalWealth">إجمالي الثروة</span>
+            <span class="result-value" id="total-wealth">0</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label" data-i18n="nisabThreshold">نصاب الزكاة</span>
+            <span class="result-value" id="nisab-value">0</span>
+          </div>
+          <div class="result-divider"></div>
+          <div class="result-row result-row-main">
+            <span class="result-label" data-i18n="zakatDue">الزكاة المستحقة (2.5%)</span>
+            <span class="result-value-main" id="zakat-due">0</span>
+          </div>
+
+          <div class="result-breakdown" id="result-breakdown"></div>
+
+          <div class="result-actions">
+            <button class="action-btn" id="save-btn">
+              <span>💾</span>
+              <span data-i18n="saveBtn">حفظ في السجل</span>
+            </button>
+            <button class="action-btn" id="share-btn">
+              <span>📤</span>
+              <span data-i18n="shareBtn">مشاركة</span>
+            </button>
+            <button class="action-btn" id="reset-btn">
+              <span>🔄</span>
+              <span data-i18n="resetBtn">حساب جديد</span>
+            </button>
+          </div>
+
+          <p class="disclaimer" data-i18n="disclaimer">⚠️ هذه الأداة مساعدة فقط. يُرجى التحقق من أهل العلم للمزيد من الدقة.</p>
+        </div>
+
+        <!-- 📊 Monetag Banner Ad - موبايل (300x250) بعد النتائج -->
+        <!-- استبدلي ZONE_ID_BANNER_MOBILE بالرقم الخاص بك -->
+        <div class="ad-container ad-mobile" aria-label="إعلان">
+          <span class="ad-label">إعلان</span>
+          <script src="https://cdn.monetag.com/scripts/v1/tag.js"
+                  data-zone-id="ZONE_ID_BANNER_MOBILE"
+                  data-type="banner"
+                  data-width="300"
+                  data-height="250"
+                  async></script>
+        </div>
+      </section>
+
+      <!-- ============ History Screen ============ -->
+      <section class="screen" id="screen-history">
+        <div class="screen-header">
+          <h2 class="screen-title" data-i18n="historyTitle">سجل الحسابات</h2>
+          <button class="clear-btn" id="clear-history" data-i18n="clearAll">مسح الكل</button>
+        </div>
+        <div id="history-list" class="history-list">
+          <div class="empty-state" id="empty-history">
+            <span class="empty-icon">📭</span>
+            <p data-i18n="emptyHistory">لا توجد حسابات محفوظة بعد</p>
+            <p class="empty-sub" data-i18n="emptyHistorySub">ابدئي بحساب زكاتك من شاشة الحاسبة</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ About Screen ============ -->
+      <section class="screen" id="screen-about">
+        <div class="about-card">
+          <div class="about-hero">
+            <div class="about-icon">🕌</div>
+            <h2 data-i18n="aboutTitle">عن تطبيق زكاتي</h2>
+          </div>
+          <p data-i18n="aboutP1">تطبيق <strong>زكاتي</strong> يساعدك على حساب زكاتك بدقة وسهولة وفقاً لأحكام الشريعة الإسلامية، اعتماداً على المذهب الحنفي (الأكثر اتباعاً).</p>
+          <p data-i18n="aboutP2">كل الحسابات تتم على جهازك فقط — لا نجمع أي بيانات شخصية.</p>
+
+          <h3 class="section-title" data-i18n="featuresTitle">المميزات</h3>
+          <ul class="features-list">
+            <li data-i18n="feature1">✅ حساب زكاة المال والذهب والفضة</li>
+            <li data-i18n="feature2">✅ يدعم 9 عملات مختلفة</li>
+            <li data-i18n="feature3">✅ يعمل بدون إنترنت</li>
+            <li data-i18n="feature4">✅ يحفظ سجل حساباتك محلياً</li>
+            <li data-i18n="feature5">✅ سهل الاستخدام بتصميم بسيط</li>
+          </ul>
+
+          <h3 class="section-title" data-i18n="howToTitle">كيفية الحساب</h3>
+          <ol class="how-to-list">
+            <li data-i18n="howTo1">أدخلي سعر جرام الذهب الحالي في بلدك</li>
+            <li data-i18n="howTo2">أدخلي المبلغ الذي تملكينه لمدة حول (سنة قمرية)</li>
+            <li data-i18n="howTo3">خصصي الديون المؤجلة (اختياري)</li>
+            <li data-i18n="howTo4">اضغطي "احسب الزكاة" لمعرفة المبلغ المستحق</li>
+          </ol>
+
+          <h3 class="section-title" data-i18n="madhabTitle">المنهج الفقهي</h3>
+          <p data-i18n="madhabP">التطبيق يعتمد على <strong>المذهب الحنفي</strong>، وهو المذهب الأكثر انتشاراً. النصاب 85 جراماً من الذهب الخالص، ومقدار الزكاة 2.5% من الثروة التي تجاوزت النصاب.</p>
+
+          <h3 class="section-title" data-i18n="disclaimerTitle">تنبيه مهم</h3>
+          <p data-i18n="disclaimerP">هذا التطبيق أداة مساعدة تقريبية. للتباين في المسائل الفقهية، يُرجى استشارة أهل العلم المتخصصين. التطبيق لا يتحمل مسؤولية أي خطأ في الحساب.</p>
+
+          <!-- 📰 Monetag Native Ad - داخل شاشة "معلومات" (إعلان يبدو جزء من المحتوى) -->
+          <!-- استبدلي ZONE_ID_NATIVE بالرقم الخاص بك -->
+          <div class="ad-container ad-native" aria-label="إعلان">
+            <span class="ad-label">إعلان مُموّل</span>
+            <script src="https://cdn.monetag.com/scripts/v1/tag.js"
+                    data-zone-id="ZONE_ID_NATIVE"
+                    data-type="native"
+                    async></script>
+          </div>
+
+          <h3 class="section-title" data-i18n="contactTitle">تواصل معنا</h3>
+          <p data-i18n="contactP">للاقتراحات أو الإبلاغ عن مشكلة، راسلنا على: <a href="mailto:contact@zakati.app">contact@zakati.app</a></p>
+
+          <div class="about-footer">
+            <p>صُنع بـ ❤️ لخدمة المسلمين</p>
+            <p class="version">الإصدار 1.0.0</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 📊 Monetag Banner Ad - ديسكتوب (728x90) قبل شريط التنقل السفلي -->
+      <!-- يظهر فقط على الشاشات الكبيرة -->
+      <!-- استبدلي ZONE_ID_BANNER_DESKTOP بالرقم الخاص بك -->
+      <div class="ad-container ad-desktop" aria-label="إعلان">
+        <span class="ad-label">إعلان</span>
+        <script src="https://cdn.monetag.com/scripts/v1/tag.js"
+                data-zone-id="ZONE_ID_BANNER_DESKTOP"
+                data-type="banner"
+                data-width="728"
+                data-height="90"
+                async></script>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="calculator">
+        <span class="nav-icon">🧮</span>
+        <span class="nav-label" data-i18n="navCalculator">الحاسبة</span>
+      </button>
+      <button class="nav-btn" data-screen="history">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label" data-i18n="navHistory">السجل</span>
+      </button>
+      <button class="nav-btn" data-screen="about">
+        <span class="nav-icon">ℹ️</span>
+        <span class="nav-label" data-i18n="navAbout">معلومات</span>
+      </button>
+    </nav>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- 🪟 Monetag Pop-up Ad - يظهر مرة كل 24 ساعة لكل زائر -->
+  <!-- استبدلي ZONE_ID_POP بالرقم الخاص بك -->
+  <script src="https://cdn.monetag.com/scripts/v1/tag.js"
+          data-zone-id="ZONE_ID_POP"
+          data-type="pop"
+          async></script>
+
+  <!-- 🎬 Monetag Vignette Ad - إعلان ملء شاشة بين التنقل -->
+  <!-- يظهر عند الانتقال بين الشاشات أو بعد حساب الزكاة -->
+  <!-- استبدلي ZONE_ID_VIGNETTE بالرقم الخاص بك -->
+  <script src="https://cdn.monetag.com/scripts/v1/tag.js"
+          data-zone-id="ZONE_ID_VIGNETTE"
+          data-type="vignette"
+          async></script>
+</body>
+  </html>
