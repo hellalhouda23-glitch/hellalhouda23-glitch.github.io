@@ -16,12 +16,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- 🔔 Monetag Push Notifications (أعلى دخل - يظهر للزائر مرة واحدة) -->
-  <!-- استبدلي ZONE_ID_PUSH بالرقم اللي يعطيك إياه Monetag من Dashboard -->
-  <script src="https://cdn.monetag.com/scripts/v1/push-sdk.js"
-          data-zone-id="ZONE_ID_PUSH"
-          data-sdk-type="web"
-          async></script>
+  <!-- ============ Monetag In-Page Push ============
+       منطقة الجوال: 11943125
+       منطقة الكمبيوتر: 11943118
+       يتم تحميل منطقة واحدة فقط حسب الجهاز، حتى لا يظهر إعلانان معاً. -->
+  <script>
+    (function () {
+      var zone = window.matchMedia('(max-width: 820px)').matches ? '11943125' : '11943118';
+      var s = document.createElement('script');
+      s.dataset.zone = zone;
+      s.src = 'https://nap5k.com/tag.min.js';
+      ([document.documentElement, document.body].filter(Boolean).pop()).appendChild(s);
+    })();
+  </script>
 </head>
 <body>
   <div class="app">
@@ -175,17 +182,6 @@
           <p class="disclaimer" data-i18n="disclaimer">⚠️ هذه الأداة مساعدة فقط. يُرجى التحقق من أهل العلم للمزيد من الدقة.</p>
         </div>
 
-        <!-- 📊 Monetag Banner Ad - موبايل (300x250) بعد النتائج -->
-        <!-- استبدلي ZONE_ID_BANNER_MOBILE بالرقم الخاص بك -->
-        <div class="ad-container ad-mobile" aria-label="إعلان">
-          <span class="ad-label">إعلان</span>
-          <script src="https://cdn.monetag.com/scripts/v1/tag.js"
-                  data-zone-id="ZONE_ID_BANNER_MOBILE"
-                  data-type="banner"
-                  data-width="300"
-                  data-height="250"
-                  async></script>
-        </div>
       </section>
 
       <!-- ============ History Screen ============ -->
@@ -236,16 +232,6 @@
           <h3 class="section-title" data-i18n="disclaimerTitle">تنبيه مهم</h3>
           <p data-i18n="disclaimerP">هذا التطبيق أداة مساعدة تقريبية. للتباين في المسائل الفقهية، يُرجى استشارة أهل العلم المتخصصين. التطبيق لا يتحمل مسؤولية أي خطأ في الحساب.</p>
 
-          <!-- 📰 Monetag Native Ad - داخل شاشة "معلومات" (إعلان يبدو جزء من المحتوى) -->
-          <!-- استبدلي ZONE_ID_NATIVE بالرقم الخاص بك -->
-          <div class="ad-container ad-native" aria-label="إعلان">
-            <span class="ad-label">إعلان مُموّل</span>
-            <script src="https://cdn.monetag.com/scripts/v1/tag.js"
-                    data-zone-id="ZONE_ID_NATIVE"
-                    data-type="native"
-                    async></script>
-          </div>
-
           <h3 class="section-title" data-i18n="contactTitle">تواصل معنا</h3>
           <p data-i18n="contactP">للاقتراحات أو الإبلاغ عن مشكلة، راسلنا على: <a href="mailto:contact@zakati.app">contact@zakati.app</a></p>
 
@@ -256,18 +242,6 @@
         </div>
       </section>
 
-      <!-- 📊 Monetag Banner Ad - ديسكتوب (728x90) قبل شريط التنقل السفلي -->
-      <!-- يظهر فقط على الشاشات الكبيرة -->
-      <!-- استبدلي ZONE_ID_BANNER_DESKTOP بالرقم الخاص بك -->
-      <div class="ad-container ad-desktop" aria-label="إعلان">
-        <span class="ad-label">إعلان</span>
-        <script src="https://cdn.monetag.com/scripts/v1/tag.js"
-                data-zone-id="ZONE_ID_BANNER_DESKTOP"
-                data-type="banner"
-                data-width="728"
-                data-height="90"
-                async></script>
-      </div>
     </main>
 
     <nav class="bottom-nav">
@@ -289,20 +263,5 @@
   </div>
 
   <script src="app.js"></script>
-
-  <!-- 🪟 Monetag Pop-up Ad - يظهر مرة كل 24 ساعة لكل زائر -->
-  <!-- استبدلي ZONE_ID_POP بالرقم الخاص بك -->
-  <script src="https://cdn.monetag.com/scripts/v1/tag.js"
-          data-zone-id="ZONE_ID_POP"
-          data-type="pop"
-          async></script>
-
-  <!-- 🎬 Monetag Vignette Ad - إعلان ملء شاشة بين التنقل -->
-  <!-- يظهر عند الانتقال بين الشاشات أو بعد حساب الزكاة -->
-  <!-- استبدلي ZONE_ID_VIGNETTE بالرقم الخاص بك -->
-  <script src="https://cdn.monetag.com/scripts/v1/tag.js"
-          data-zone-id="ZONE_ID_VIGNETTE"
-          data-type="vignette"
-          async></script>
 </body>
-  </html>
+              </html>
